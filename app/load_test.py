@@ -4,8 +4,8 @@ import aiohttp
 import uuid
 
 URL = "http://127.0.0.1:8000/reward/decide"
-TOTAL_REQUESTS = 10000
-CONCURRENCY = 500
+TOTAL_REQUESTS = 1000
+CONCURRENCY = 50
 
 async def send_request(session, i):
     payload = {

@@ -167,6 +167,10 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
+### Access the Payment Service UI locally at the following URL after starting the server:
+
+http://127.0.0.1:8000/home/
+
 ### Running Unit Tests
 
 ```bash
