@@ -7,7 +7,6 @@ from app.persona import get_persona
 from app.policy import calculate_xp, POLICY
 from app.utils import deterministic_weighted_choice
 
-ALLOWED_TXN_TYPES = ['UPI', 'CARD']
 
 def decide_reward(req):
     #idem-key check the cache before do anything, it prevents a double reward or payment
@@ -22,8 +21,11 @@ def decide_reward(req):
     raw = f"{req.txn_id}:{req.user_id}:{req.merchant_id}"
     decision_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, raw))
 
-    if req.txn_type not in ALLOWED_TXN_TYPES:
-        raise HTTPException(status_code=400, detail="Unsupported transaction type")
+    #allowed transaction types
+    allowed_txn_types = POLICY["transactions"]["allowed_types"]
+
+    if req.txn_type not in allowed_txn_types:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported transaction type")
     
     try:
         txn_time = datetime.fromisoformat(req.ts.replace("Z", "+00:00"))
@@ -33,7 +35,7 @@ def decide_reward(req):
     
     # Reject future-dated transactions
     if txn_time.timestamp() > time():
-        raise HTTPException(status_code=400, detail="Transaction timestamp cannot be in the future")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Transaction timestamp cannot be in the future")
 
     #System checks what type of user this is (new, old, heavy)
     persona_key = f"persona:{req.user_id}"

@@ -14,6 +14,11 @@ daily_cac_cap:
   RETURNING: 30
   POWER: 10
 
+transactions:
+  allowed_types:
+    - UPI
+    - CARD
+
 reward_weights:
   GOLD: 0.01
 # 1% weight(chance) for getting a gold
