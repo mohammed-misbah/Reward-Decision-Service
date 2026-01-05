@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPI Reward Decision Simulator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .header {
+      padding: 20px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #5a52a8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .user-details h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .user-details p {
+      font-size: 13px;
+      color: #65676b;
+      margin-top: 2px;
+    }
+    .menu-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .menu-icon span {
+      width: 4px;
+      height: 4px;
+      background: #1a1a1a;
+      border-radius: 50%;
+    }
+    .balance-card {
+      margin: 16px 20px 20px;
+      background: linear-gradient(135deg, #4990ff 0%, #3d7dff 100%);
+      border-radius: 20px;
+      padding: 20px;
+      color: white;
+    }
+    .balance-label {
+      font-size: 13px;
+      opacity: 0.95;
+      margin-bottom: 4px;
+    }
+    .balance-amount {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .form-section {
+      padding: 0 20px 24px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+    }
+    .input-group {
+      margin-bottom: 14px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #f0f2f5;
+      color: #1a1a1a;
+      font-weight: 400;
+      transition: all 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      background: #e4e6eb;
+    }
+    .input-group input::placeholder {
+      color: #8e8e93;
+      font-weight: 400;
+    }
+    
+    /* Custom Dropdown Styling */
+    .dropdown-wrapper {
+      position: relative;
+    }
+    .dropdown-selected {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #f0f2f5;
+      color: #1a1a1a;
+      font-weight: 400;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .dropdown-selected:hover {
+      background: #e4e6eb;
+    }
+    .dropdown-arrow {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid #1a1a1a;
+      transition: transform 0.2s;
+    }
+    .dropdown-arrow.open {
+      transform: rotate(180deg);
+    }
+    .dropdown-options {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .dropdown-options.open {
+      max-height: 200px;
+      opacity: 1;
+    }
+    .dropdown-option {
+      padding: 14px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      color: #1a1a1a;
+      transition: background 0.2s;
+    }
+    .dropdown-option:hover {
+      background: #f0f2f5;
+    }
+    .dropdown-option.selected {
+      background: #e7f0ff;
+      color: #4990ff;
+      font-weight: 500;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #4990ff 0%, #3d7dff 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(73, 144, 255, 0.4);
+    }
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    .result {
+      margin-top: 20px;
+      display: none;
+    }
+    .result-card {
+      background: #f0f2f5;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+    .result-row:not(:last-child) {
+      border-bottom: 1px solid #e4e6eb;
+    }
+    .result-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 12px;
+    }
+    .result-left {
+      display: flex;
+      align-items: center;
+    }
+    .result-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .result-info p {
+      font-size: 12px;
+      color: #65676b;
+      margin-top: 2px;
+    }
+    .result-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="user-info">
+      <div class="avatar">M</div>
+      <div class="user-details">
+        <h3>Mohammed Misbah</h3>
+        <p>+91 9061XXXXXX</p>
+      </div>
+    </div>
+    <div class="menu-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-label">Available Balance</div>
+    <div class="balance-amount">$4,870.00</div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-title">Recent Transaction</div>
+
+    <div class="input-group">
+      <label>Transaction ID</label>
+      <input id="txn_id" placeholder="txn_123" />
+    </div>
+
+    <div class="input-group">
+      <label>User ID</label>
+      <input id="user_id" placeholder="u1" />
+    </div>
+
+    <div class="input-group">
+      <label>Merchant ID</label>
+      <input id="merchant_id" placeholder="amazon" />
+    </div>
+
+    <div class="input-group">
+      <label>Amount (₹)</label>
+      <input id="amount" type="number" placeholder="500" />
+    </div>
+
+    <div class="input-group">
+      <label>Transaction Type</label>
+      <div class="dropdown-wrapper">
+        <div class="dropdown-selected" id="dropdown-selected" onclick="toggleDropdown()">
+          <span id="selected-value">CARD</span>
+          <div class="dropdown-arrow" id="dropdown-arrow"></div>
+        </div>
+        <div class="dropdown-options" id="dropdown-options">
+          <div class="dropdown-option" onclick="selectOption('UPI')">UPI</div>
+          <div class="dropdown-option selected" onclick="selectOption('CARD')">CARD</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitTxn()">Simulate Payment</button>
+
+    <div id="output" class="result">
+      <div class="result-card">
+        <div class="result-row" id="reward-row">
+          <div class="result-left">
+            <div class="result-icon">🎁</div>
+            <div class="result-info">
+              <h4>Reward Value</h4>
+              <p id="reward-type">-</p>
+            </div>
+          </div>
+          <div class="result-value" id="reward-value">-</div>
+        </div>
+        <div class="result-row">
+          <div class="result-left">
+            <div class="result-icon">⚡</div>
+            <div class="result-info">
+              <h4>XP Earned</h4>
+              <p id="decision-id">-</p>
+            </div>
+          </div>
+          <div class="result-value" id="xp-value">-</div>
+        </div>
+        <div class="result-row">
+          <div class="result-left">
+            <div class="result-icon">👤</div>
+            <div class="result-info">
+              <h4>Persona</h4>
+              <p id="policy-version">-</p>
+            </div>
+          </div>
+          <div class="result-value" id="persona-value">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedTxnType = 'CARD';
+
+function toggleDropdown() {
+  const options = document.getElementById('dropdown-options');
+  const arrow = document.getElementById('dropdown-arrow');
+  options.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function selectOption(value) {
+  selectedTxnType = value;
+  document.getElementById('selected-value').textContent = value;
+  
+  // Update selected styling
+  const allOptions = document.querySelectorAll('.dropdown-option');
+  allOptions.forEach(opt => {
+    opt.classList.remove('selected');
+    if (opt.textContent === value) {
+      opt.classList.add('selected');
+    }
+  });
+  
+  toggleDropdown();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const dropdown = document.querySelector('.dropdown-wrapper');
+  if (!dropdown.contains(e.target)) {
+    document.getElementById('dropdown-options').classList.remove('open');
+    document.getElementById('dropdown-arrow').classList.remove('open');
+  }
+});
+
+async function submitTxn() {
+  const payload = {
+    txn_id: document.getElementById("txn_id").value,
+    user_id: document.getElementById("user_id").value,
+    merchant_id: document.getElementById("merchant_id").value,
+    amount: Number(document.getElementById("amount").value),
+    txn_type: selectedTxnType,
+    ts: new Date().toISOString()
+  };
+
+  const res = await fetch("http://127.0.0.1:8000/reward/decide", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+
+  document.getElementById("output").style.display = "block";
+  
+  // Reward display (CHECKOUT / GOLD / XP)
+if (data.reward.type === "CHECKOUT") {
+  document.getElementById("reward-value").textContent =
+    "₹" + data.reward.value + " (₹" + data.reward.remaining_today + " left today)";
+  document.getElementById("reward-type").textContent =
+    "CHECKOUT | Daily Cap ₹" + data.reward.daily_cap;
+
+} else if (data.reward.type === "GOLD") {
+  document.getElementById("reward-value").textContent =
+    "Gold Reward Earned";
+  document.getElementById("reward-type").textContent =
+    "GOLD | Premium Reward";
+
+} else {
+  // XP case
+  document.getElementById("reward-value").textContent =
+    "No Cash Reward";
+  document.getElementById("reward-type").textContent =
+    "XP Reward";
+}
+
+  
+  // XP
+  document.getElementById("xp-value").textContent =
+    data.xp_info.earned + " / " + data.xp_info.max_per_txn;
+  document.getElementById("decision-id").textContent =
+    data.xp_info.rate + (data.xp_info.was_capped ? " (Capped)" : "");
+  
+  document.getElementById("persona-value").textContent = data.meta.persona;
+  document.getElementById("policy-version").textContent = "v" + data.policy_version;
+}
+</script>
+
+</body>
+</html>

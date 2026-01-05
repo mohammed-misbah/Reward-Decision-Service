@@ -1,0 +1,31 @@
+policy_version: "v1"
+
+xp:
+  xp_per_rupee: 0.1
+  max_xp_per_txn: 500
+
+persona_multiplier:
+  NEW: 1.5
+  RETURNING: 1.0
+  POWER: 0.8
+
+daily_cac_cap:
+  NEW: 50
+  RETURNING: 30
+  POWER: 10
+
+reward_weights:
+  GOLD: 0.01
+# 1% weight(chance) for getting a gold
+
+checkout:
+  cashback_percent: 0.02
+
+idempotency:
+  ttl_seconds: 86400
+
+"cooldown":
+    "reward_seconds": 60
+
+feature_flags:
+  prefer_xp: false
