@@ -7,7 +7,6 @@ class RewardRequest(BaseModel):
     merchant_id: str
     amount: float
     txn_type: str
-    ts: str
 
 class RewardResponse(BaseModel):
     decision_id: str

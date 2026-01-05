@@ -21,7 +21,7 @@ transactions:
 
 reward_weights:
   GOLD: 0.01
-# 1% weight(chance) for getting a gold
+# xx% weight(chance) for getting a gold
 
 checkout:
   cashback_percent: 0.02

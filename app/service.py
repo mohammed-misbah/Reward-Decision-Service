@@ -26,16 +26,6 @@ def decide_reward(req):
 
     if req.txn_type not in allowed_txn_types:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported transaction type")
-    
-    try:
-        txn_time = datetime.fromisoformat(req.ts.replace("Z", "+00:00"))
-    except Exception:
-        raise HTTPException( status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid timestamp format."
-        )
-    
-    # Reject future-dated transactions
-    if txn_time.timestamp() > time():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Transaction timestamp cannot be in the future")
 
     #System checks what type of user this is (new, old, heavy)
     persona_key = f"persona:{req.user_id}"
@@ -55,9 +45,11 @@ def decide_reward(req):
     now = time()
 
     cooldown_active = False
-    if last_reward_ts:
+    if last_reward_ts is not None:
+        last_reward_ts = float(last_reward_ts)
         if now - last_reward_ts < cooldown_seconds:
             cooldown_active = True
+
     
     #CAC(Cash rwd's)
     cac_key = f"cac:{req.user_id}:{date.today()}" #how much rwd earn today
