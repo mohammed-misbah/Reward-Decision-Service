@@ -90,7 +90,7 @@ def decide_reward(req):
     elif spent < cap:
         reward_type = "CHECKOUT"
         reward_value = min(int(req.amount * rate), cap - spent)
-        set(cac_key, spent + reward_value, idem_ttl)  #daily CAC must live full day
+        set(cac_key, spent + reward_value, idem_ttl)
 
     else:
         reward_type = "XP"
