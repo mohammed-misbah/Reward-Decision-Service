@@ -7,7 +7,7 @@ This project is a FastAPI-based Reward Decision microservice.
 It returns a **deterministic** and **idempotent** reward decision for each transaction.  
 The same input will always produce the same output.
 
-This service is built to demonstrate backend engineering fundamentals such as correctness, scalability thinking, clean architecture, and performance discipline.
+This service is built to demonstrate backend engineering fundamentals such as correctness, scalability, clean architecture, and performance discipline.
 
 ---
 
